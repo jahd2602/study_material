@@ -13,7 +13,15 @@ export default function Experience() {
 
 
   useEffect(() => {
+    // Define ENUM with all possible messages ids
+    const MessageType = {
+      'heartbeat': 0,
+      'worldreset': 1,
+    };
+
+
     let connectUsingId = (selfId) => {
+      // Initialize connection to server
       const peerId = "ball-race-online-" + selfId;
       console.log("Trying to connect using peerId: " + peerId + "...");
       const peer = new Peer(peerId, {
@@ -37,16 +45,19 @@ export default function Experience() {
           otherId = "ball-race-online-0"
         }
         console.log("Trying to connect to peerId: " + otherId + "...");
+        // Connect to other peer
         const conn = peer.connect(otherId);
         conn.on("open", () => {
           // --- puppet
           console.log("Connected to peer MASTER (as puppet)!");
           console.log("Sending hi!! every second")
           setInterval(() => {
-            conn.send('hi!! from puppet');
+            conn.send({
+              type: MessageType.heartbeat,
+              msg: 'hi!! from puppet'
+            });
           }, 1000);
 
-          // Receive messages
           conn.on('data', function (data) {
             console.log('Received data (as puppet):');
             console.log(data);
@@ -58,7 +69,19 @@ export default function Experience() {
           console.log("Connected to peer puppet (as MASTER)!");
           console.log("Sending hello every second")
           setInterval(() => {
-            conn.send('hello from MASTER');
+            conn.send({
+              type: MessageType.heartbeat,
+              msg: 'hello from MASTER'
+            });
+          }, 1000);
+
+          // Send world reset message after 1 ms
+          setTimeout(() => {
+            // TODO: Add block information to this message from Level
+            conn.send({
+              type: MessageType.worldreset,
+              msg: 'reset world'
+            });
           }, 1000);
 
           conn.on('data', function (data) {
