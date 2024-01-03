@@ -39,28 +39,30 @@ export default function Experience() {
         console.log("Trying to connect to peerId: " + otherId + "...");
         const conn = peer.connect(otherId);
         conn.on("open", () => {
-          console.log("Connected to peer A!");
+          // --- puppet
+          console.log("Connected to peer MASTER (as puppet)!");
           console.log("Sending hi!! every second")
           setInterval(() => {
-            conn.send('hi!!');
+            conn.send('hi!! from puppet');
           }, 1000);
 
           // Receive messages
           conn.on('data', function (data) {
-            console.log('A Received data:');
+            console.log('Received data (as puppet):');
             console.log(data);
           });
         });
 
         peer.on('connection', function (conn) {
-          console.log("Connected to peer B!");
+          // --- MASTER
+          console.log("Connected to peer puppet (as MASTER)!");
           console.log("Sending hello every second")
           setInterval(() => {
-            conn.send('hello');
+            conn.send('hello from MASTER');
           }, 1000);
 
           conn.on('data', function (data) {
-            console.log("B Received data:");
+            console.log("Received data (as MASTER):");
             console.log(data);
           });
         });
