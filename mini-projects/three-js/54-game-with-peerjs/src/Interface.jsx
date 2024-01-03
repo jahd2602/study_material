@@ -21,7 +21,6 @@ export default function Interface() {
   useEffect(() => {
     const unsubscribeEffect = addEffect(() => {
       const state = useGame.getState();
-      console.log(state.phase);
 
       let elapsedTime = 0;
 
